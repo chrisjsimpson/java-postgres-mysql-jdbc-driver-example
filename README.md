@@ -31,6 +31,7 @@ for container like environments.
      javac Mysql.java
      java Mysql
 
+
 ## Docker run
 
 Spin up docker container, connect to postgres database using environment vars
@@ -39,3 +40,15 @@ and then drop to a sh shell.
      docker build -t my-java-app .
      docker run -it --rm --name my-running-app myjava
      docker run --network="host" --env DB_USER=postgres --env DB_PASS=password -it --rm --name my-running-app myjava
+
+## Kubernetes
+
+Note that the default `Postgres.java` file referes to "postgres-service" as the
+host for the postgres instance. This is refering to the `postgres-service` 
+defines in `k8.yaml`. This resolves to the postgres instance within a kubernetes
+pod (an `nslookup postgres-service` resolves to the ip of the postgres 
+container.
+
+     sudo microk8s.docker build -t myjava .
+     sudo microk8s.docker tag myjava localhost:32000/myjava
+     sudo microk8s.docker push localhost:32000/myjava

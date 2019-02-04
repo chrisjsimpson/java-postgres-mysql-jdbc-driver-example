@@ -3,7 +3,7 @@ import java.sql.*;
 
 public class Postgres {
    // JDBC driver name and database URL
-   static final String DB_URL = "jdbc:postgresql://localhost/fred_db";
+   static final String DB_URL = "jdbc:postgresql://postgres-service/fred_db";
 
    //  Database credentials
    static final String USER = System.getenv("DB_USER");

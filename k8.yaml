@@ -1,0 +1,120 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: postgres-credentials
+type: Opaque
+data:
+    postgres_user: cG9zdGdyZXM= #postgres
+    postgres_password: cGFzc3dvcmQ= #password
+---
+apiVersion: v1
+kind: Service 
+metadata: 
+    name: postgres-service
+spec:
+    selector: 
+        app: postgres
+    ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: postgres
+    labels:
+        app: postgres
+spec:
+    replicas: 1
+    selector: 
+        matchLabels: 
+            app: postgres
+    template:
+        metadata:
+            labels:
+                app: postgres
+        spec:
+            containers:
+            - name: postgres
+              image: postgres:11.1-alpine
+              env:
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                     name: postgres-credentials
+                     key: postgres_user
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                     name: postgres-credentials
+                     key: postgres_password
+              volumeMounts:
+              - name: postgres-volume
+                mountPath: "/var/lib/postgresql/data"
+              ports:
+              - containerPort: 5432
+            volumes: 
+                - name: postgres-volume
+                  persistentVolumeClaim:
+                    claimName: postgres-volume-claim
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+    name: postgres-volume-claim
+spec:
+    accessModes:
+        - ReadWriteOnce
+    volumeMode: Filesystem
+    resources:
+        requests:
+            storage: 5Gi
+    selector:
+        matchLabels:
+            release: "stable"
+---
+apiVersion: v1
+kind: Service 
+metadata: 
+    name: myjavaapp-service
+spec:
+    selector: 
+        app: myjavaapp
+    ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: myjavaapp
+    labels:
+        app: myjavaapp
+spec:
+    replicas: 1
+    selector: 
+        matchLabels: 
+            app: myjavaapp
+    template:
+        metadata:
+            labels:
+                app: myjavaapp
+        spec:
+            containers:
+            - name: javapostgress
+              image: localhost:32000/myjava
+              env:
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                     name: postgres-credentials
+                     key: postgres_user
+                - name: DB_PASS
+                  valueFrom:
+                    secretKeyRef:
+                     name: postgres-credentials
+                     key: postgres_password
+              ports:
+              - containerPort: 5432
