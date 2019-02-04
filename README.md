@@ -34,7 +34,7 @@ for container like environments.
 ## Docker run
 
 Spin up docker container, connect to postgres database using environment vars
-and exit.
+and then drop to a sh shell.
 
      docker build -t my-java-app .
      docker run -it --rm --name my-running-app myjava
