@@ -30,3 +30,12 @@ for container like environments.
      # Then you can run:
      javac Mysql.java
      java Mysql
+
+## Docker run
+
+Spin up docker container, connect to postgres database using environment vars
+and exit.
+
+     docker build -t my-java-app .
+     docker run -it --rm --name my-running-app myjava
+     docker run --network="host" --env DB_USER=postgres --env DB_PASS=password -it --rm --name my-running-app myjava
