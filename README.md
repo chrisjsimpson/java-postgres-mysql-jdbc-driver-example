@@ -106,7 +106,7 @@ microk8s.kubectl get pods
 View the logs (e.g. "org.postgresql.util.PSQLException: FATAL: database "fred_db" does not exist"):
 
 ```
-microk8s.kubectl logs myjavaapp-64974db66b-mh87j
+microk8s.kubectl logs <pod-name>
 ```
 If you see that error, your java app has connected to Postgres correctly using the secrets, and
 via the postgres service to the running database.
